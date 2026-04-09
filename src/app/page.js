@@ -165,7 +165,7 @@ function Loader() {
     const timer = setTimeout(() => {
       ref.current?.classList.add('hidden')
       document.body.style.overflow = ''
-    }, 2700)
+    }, 1000)
     document.body.style.overflow = 'hidden'
     return () => clearTimeout(timer)
   }, [])
@@ -326,7 +326,17 @@ function Hero() {
           ref={videoRef}
           className="hero-video hero-video--parallax"
           src="/videos/bar_background.mp4"
-          autoPlay muted loop playsInline
+          autoPlay muted playsInline
+          onTimeUpdate={(e) => {
+            const video = e.target;
+            if (video.duration - video.currentTime <= 1 && !video.dataset.fading) {
+              video.dataset.fading = 'true';
+              video.style.transition = 'opacity 1s ease-out';
+              video.style.opacity = '0';
+              video.parentElement.style.transition = 'background-color 1s ease-out';
+              video.parentElement.style.backgroundColor = '#000000';
+            }
+          }}
         />
       </div>
 
@@ -348,7 +358,7 @@ function Hero() {
         </div>
 
         {/* ── Cinematic word-by-word headline ── */}
-        <h1 className="hero-h1">
+        <h1 className="hero-h2">
           <span className="line-wrap">
             <span className="line-inner l1">
               {'Where Craft'.split('').map((ch, i) => (
@@ -364,7 +374,7 @@ function Hero() {
           </span>
           <span className="line-wrap">
             <span className="line-inner l2">
-              {'Meets Ritual'.split('').map((ch, i) => (
+              {'Meets'.split('').map((ch, i) => (
                 <span
                   key={i}
                   className="hero-char"
@@ -377,7 +387,7 @@ function Hero() {
           </span>
           <span className="line-wrap">
             <span className="line-inner l3">
-              {'& Desire'.split('').map((ch, i) => (
+              {'Ritual & Desire'.split('').map((ch, i) => (
                 <span
                   key={i}
                   className="hero-char"
@@ -774,7 +784,7 @@ function Atmosphere() {
       const viewH    = window.innerHeight;
 
      const scrolled  = viewH - rect.top;        // distance from viewport top to section top
-const maxScroll = sectionH;
+      const maxScroll = sectionH;
       const progress  = Math.max(0, Math.min(1, scrolled / maxScroll));
 
       /* Phase 1 — words */
@@ -786,15 +796,15 @@ const maxScroll = sectionH;
       setImagesVisible(allDone);
 
       if (allDone) {
-        const slideProgress =
-          (progress - WORD_PHASE_END) / (1 - WORD_PHASE_END);
+        const slideProgress = (progress - WORD_PHASE_END) / (1 - WORD_PHASE_END);
         setActiveSlide(
           Math.min(
             IMAGES.length - 1,
             Math.floor(Math.max(0, slideProgress) * IMAGES.length)
           )
         );
-      } else {
+      } 
+      else {
         setActiveSlide(0);
       }
     }
